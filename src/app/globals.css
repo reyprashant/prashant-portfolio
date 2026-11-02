@@ -1,0 +1,547 @@
+/*
+ * Global stylesheet: the single source of truth for design tokens.
+ *
+ * Every colour, font, breakpoint and spacing value used by a component is
+ * defined here and consumed through Tailwind utilities or the component
+ * classes below. Raw hex values never appear in TSX.
+ *
+ * Token values come from context/PORTFOLIO_BRIEF.md section 7, with the
+ * contrast corrections recorded in IMPLEMENTATION_PLAN.md section 4.2.
+ */
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* 1. Design tokens                                                    */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Reset Tailwind's default palette so only brand tokens exist. */
+  --color-*: initial;
+
+  /* Surfaces */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-grey: #f4f5f6;
+  --color-warm: #fbf4ee;
+
+  /* Text on light surfaces */
+  --color-ink: #0f1418;
+  --color-muted: #454e56; /* darkened from #5A636B for 7.8:1 on white */
+  --color-eyebrow: #3c4650;
+
+  /* Text on dark surfaces */
+  --color-on-dark: #e3e6e9;
+  --color-on-dark-muted: #b4bcc3;
+
+  /* Rules and borders */
+  --color-line-dark: #2e3439;
+  --color-line-light: #e1e4e7;
+  --color-line-strong: #5a636b; /* input borders, 6.1:1 on white */
+
+  /* Accent. Replace the three accent values with Zenox's exact orange once confirmed. */
+  --color-accent: #ff6a00; /* 7.3:1 on black. Never as text on light surfaces. */
+  --color-accent-light: #ff8a33;
+  --color-accent-dark: #e05a00; /* button hover, focus ring on light */
+  --color-accent-text: #b84800; /* 5.3:1 on white: links and accent words on light */
+  --color-on-accent: #1a0d00; /* 6.6:1 on accent */
+
+  /* Breakpoints (brief 9.3). Mobile first. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 380px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1100px;
+  --breakpoint-2xl: 1440px;
+
+  /* Radii: content is square, buttons are pills. */
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-reveal: 500ms;
+}
+
+/*
+ * Inline theme values resolve at the point of use, which lets the surface
+ * variables below cascade per section. `text-fg` inside a black section is
+ * light, inside a white section it is ink.
+ */
+@theme inline {
+  --font-display: var(--font-bebas), "Arial Narrow", Impact, sans-serif;
+  --font-body: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-fg: var(--surface-fg);
+  --color-fg-muted: var(--surface-muted);
+  --color-fg-eyebrow: var(--surface-eyebrow);
+  --color-line: var(--surface-line);
+  --color-highlight: var(--surface-accent);
+  --color-focus: var(--surface-focus);
+  --color-surface: var(--surface-bg);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Layout variables (brief 7.4)                                     */
+/* ------------------------------------------------------------------ */
+:root {
+  --container-max: 1320px;
+  --gutter: 56px; /* 112px total side space on desktop */
+  --section-y: 84px;
+  --card-gap: 22px;
+  --card-pad: 34px;
+  --header-h: 76px;
+  --button-h: 54px;
+  --tap-min: 44px;
+
+  /* Grad token kept from the brief; primary buttons are solid by default (plan 4.2). */
+  --grad-cta: linear-gradient(
+    135deg,
+    var(--color-accent-light),
+    var(--color-accent-dark)
+  );
+}
+
+@media (max-width: 1099px) {
+  :root {
+    --gutter: 36px;
+    --card-pad: 27px;
+  }
+}
+@media (max-width: 991px) {
+  :root {
+    --section-y: 70px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --gutter: 20px;
+    --section-y: 48px;
+  }
+}
+@media (max-width: 359px) {
+  :root {
+    --gutter: 16px;
+    --card-pad: 23px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Surfaces                                                         */
+/* Each section sets one of these; children read the --surface-* vars. */
+/* ------------------------------------------------------------------ */
+.surface-black,
+.surface-ink {
+  --surface-bg: var(--color-black);
+  --surface-fg: var(--color-white);
+  --surface-body: var(--color-on-dark);
+  --surface-muted: var(--color-on-dark-muted);
+  --surface-eyebrow: var(--color-on-dark-muted);
+  --surface-line: var(--color-line-dark);
+  --surface-accent: var(--color-accent);
+  --surface-focus: var(--color-accent);
+  color-scheme: dark;
+}
+.surface-ink {
+  --surface-bg: var(--color-ink);
+}
+.surface-white,
+.surface-grey,
+.surface-warm {
+  --surface-bg: var(--color-white);
+  --surface-fg: var(--color-ink);
+  --surface-body: var(--color-muted);
+  --surface-muted: var(--color-muted);
+  --surface-eyebrow: var(--color-eyebrow);
+  --surface-line: var(--color-line-light);
+  --surface-accent: var(--color-accent-text);
+  --surface-focus: var(--color-accent-dark);
+  color-scheme: light;
+}
+.surface-grey {
+  --surface-bg: var(--color-grey);
+}
+.surface-warm {
+  --surface-bg: var(--color-warm);
+}
+.surface-black,
+.surface-ink,
+.surface-white,
+.surface-grey,
+.surface-warm {
+  background-color: var(--surface-bg);
+  color: var(--surface-fg);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Base                                                             */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 16px);
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100svh;
+  }
+  @media (max-width: 767px) {
+    body {
+      font-size: 16px;
+    }
+  }
+
+  /* Visible focus everywhere (brief 9.1). */
+  :focus-visible {
+    outline: 3px solid var(--surface-focus, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  img,
+  picture,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Reduced motion: remove all transitions and animations (brief 7.5). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Component classes                                                */
+/* Typography scale from brief 7.3. Use these instead of ad hoc sizes.  */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .container-site {
+    width: min(var(--container-max), 100% - (var(--gutter) * 2));
+    margin-inline: auto;
+  }
+
+  .section-y {
+    padding-block: var(--section-y);
+  }
+
+  /* Display type: Bebas Neue has a single weight, so size and case carry the hierarchy. */
+  .type-display-1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(50px, 15vw, 88px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .type-display-2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 9.8vw, 56px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .type-stat {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 768px) {
+    .type-display-1 {
+      font-size: clamp(64px, min(7.8vw, 13.6svh), 112px);
+    }
+    .type-display-2 {
+      font-size: clamp(44px, 5.45vw, 78px);
+    }
+    .type-stat {
+      font-size: 44px;
+    }
+  }
+
+  .type-h3 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .type-body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  .type-body-lg {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .type-eyebrow {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+  }
+  .type-button {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .type-small {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  @media (min-width: 768px) {
+    .type-h3 {
+      font-size: 26px;
+    }
+    .type-body {
+      font-size: 17px;
+    }
+    .type-body-lg {
+      font-size: 20px;
+    }
+    .type-eyebrow {
+      font-size: 12px;
+      letter-spacing: 2.2px;
+    }
+    .type-button {
+      font-size: 15px;
+    }
+  }
+
+  /* Section reveal (brief 7.5). Hidden state is applied only by the client,
+     after hydration, to elements below the fold. See components/ui/Reveal.tsx. */
+  .reveal {
+    transition:
+      opacity var(--duration-reveal) var(--ease-out-soft),
+      transform var(--duration-reveal) var(--ease-out-soft);
+  }
+  .reveal[data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal[data-reveal="pending"] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Feature card: summary and links collapse until hover or focus. Devices
+     without a hover pointer always show them. The grid-row trick animates
+     height without measuring it. */
+  .feature-card-more {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows var(--duration-base) var(--ease-out-soft),
+      opacity var(--duration-base) var(--ease-out-soft);
+  }
+  .feature-card:hover .feature-card-more,
+  .feature-card:focus-within .feature-card-more {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  @media (hover: none) {
+    .feature-card-more {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+  }
+
+  /* Accent word inside a display heading. Colour comes from the surface. */
+  .accent-word {
+    color: var(--surface-accent);
+  }
+
+  /* Dark gradient behind text on photographs. The lower half, where the text
+     sits, stays at or above 0.78 alpha so the muted label (#B4BCC3) and white
+     body text keep 4.5:1 on any photograph. */
+  .photo-scrim {
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.9) 0%,
+      rgb(0 0 0 / 0.82) 40%,
+      rgb(0 0 0 / 0.55) 60%,
+      rgb(0 0 0 / 0.2) 80%,
+      rgb(0 0 0 / 0.05) 100%
+    );
+  }
+
+  /* Blog post body. Markdown output from MDX gets its type here so posts
+     need no classes. Measure is set by the parent (max-width 68ch). */
+  .prose-site {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+  @media (min-width: 768px) {
+    .prose-site {
+      font-size: 18px;
+    }
+  }
+  .prose-site > * + * {
+    margin-top: 1.25em;
+  }
+  .prose-site h2,
+  .prose-site h3,
+  .prose-site h4 {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .prose-site h2 {
+    font-size: 26px;
+    margin-top: 2em;
+  }
+  .prose-site h3 {
+    font-size: 21px;
+    margin-top: 1.75em;
+  }
+  .prose-site h4 {
+    font-size: 18px;
+  }
+  .prose-site p,
+  .prose-site li {
+    color: var(--color-muted);
+  }
+  .prose-site strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .prose-site a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 50%, transparent);
+    text-underline-offset: 4px;
+    transition: color var(--duration-fast);
+  }
+  .prose-site a:hover {
+    color: var(--color-accent-text);
+    text-decoration-color: var(--color-accent-text);
+  }
+  .prose-site ul,
+  .prose-site ol {
+    padding-left: 1.4em;
+  }
+  .prose-site ul {
+    list-style: square;
+  }
+  .prose-site ol {
+    list-style: decimal;
+  }
+  .prose-site li + li {
+    margin-top: 0.5em;
+  }
+  .prose-site li::marker {
+    color: var(--color-accent-text);
+  }
+  .prose-site blockquote {
+    border-left: 3px solid var(--color-accent-text);
+    padding-left: 1.25em;
+    font-size: 1.1em;
+    color: var(--color-ink);
+  }
+  .prose-site blockquote p {
+    color: inherit;
+  }
+  .prose-site code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    background: var(--color-grey);
+    padding: 0.15em 0.4em;
+    color: var(--color-ink);
+  }
+  .prose-site pre {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .prose-site pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+  .prose-site img {
+    width: 100%;
+    height: auto;
+    margin-block: 0.5em;
+  }
+  .prose-site hr {
+    border: 0;
+    border-top: 1px solid var(--color-line-light);
+    margin-block: 2.5em;
+  }
+  .prose-site table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+  }
+  .prose-site th,
+  .prose-site td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-line-light);
+    vertical-align: top;
+  }
+  .prose-site th {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* Hides content visually while keeping it available to assistive tech. */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
