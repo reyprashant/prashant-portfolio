@@ -49,3 +49,6 @@ next-env.d.ts
 
 # original photographs (52 MB); processed WebP copies live in public/images
 /context/source-images/
+/dist/
+.vinext/
+.cloudflare/

@@ -1,0 +1,28 @@
+# Local or single-server deployment.
+#   cp .env.example .env   # fill in the values
+#   docker compose up --build -d
+services:
+  web:
+    build:
+      context: .
+      args:
+        # Public values are compiled in at build time; read them from .env.
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
+        NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:-}
+        NEXT_PUBLIC_CONTACT_EMAIL: ${NEXT_PUBLIC_CONTACT_EMAIL:-}
+        NEXT_PUBLIC_CONTACT_PHONE: ${NEXT_PUBLIC_CONTACT_PHONE:-}
+        TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
+    image: prashant-portfolio:latest
+    # Server-only secrets (Resend, Turnstile secret, CONTACT_*) are read at runtime.
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      # Persist the next/image optimisation cache across restarts.
+      - image-cache:/app/.next/cache/images
+
+volumes:
+  image-cache:

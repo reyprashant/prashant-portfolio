@@ -1,7 +1,7 @@
 /**
  * Next.js configuration.
  *
- * Covers image optimisation (AVIF/WebP, remote placeholder host), permanent
+ * Covers standalone output for Docker, image optimisation (AVIF/WebP), permanent
  * redirects for merged or hidden routes, MDX for blog posts and a small set
  * of security headers. See IMPLEMENTATION_PLAN.md sections 6.5 and 9.6.
  */
@@ -19,6 +19,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Emits .next/standalone with a minimal server.js and only the traced
+  // node_modules, which the Dockerfile copies into the runtime image.
+  output: "standalone",
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,

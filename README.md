@@ -61,6 +61,27 @@ npm run dev                  # http://localhost:3000
 
 See `.env.example`. In production the contact form renders only when `RESEND_API_KEY`, `CONTACT_TO_EMAIL` and `CONTACT_FROM_EMAIL` are set, or when `CONTACT_DELIVERY_MODE=log` (QA only). Set `NEXT_PUBLIC_SITE_URL` to the final domain before deploying so canonicals, sitemap, robots and Open Graph URLs are correct.
 
+## Deploying with Docker
+
+The `Dockerfile` builds a small production image from Next.js standalone output (about 50 MB of app files on `node:24-alpine`), running as a non-root user with a health check on `/robots.txt`.
+
+```bash
+# one-off build and run
+docker build -t prashant-portfolio --build-arg NEXT_PUBLIC_SITE_URL=https://your-domain.com .
+docker run -d -p 3000:3000 --env-file .env --name portfolio prashant-portfolio
+
+# or with compose (reads .env for both build args and runtime secrets)
+cp .env.example .env
+docker compose up --build -d
+```
+
+Two kinds of settings:
+
+- `NEXT_PUBLIC_*` and `TURNSTILE_SITE_KEY` are compiled into the pages at build time, so pass them as `--build-arg` (compose does this from `.env`). Rebuild the image when they change.
+- Server secrets (`RESEND_API_KEY`, `CONTACT_*`, `TURNSTILE_SECRET_KEY`) are read at runtime from `--env-file` or the host's environment. No rebuild needed.
+
+The image serves `/public` and `/_next/static` itself; put a CDN or reverse proxy (Caddy, Nginx, Cloudflare) in front for TLS and caching.
+
 ## Launch checklist
 
 Section 14 of [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).

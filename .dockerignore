@@ -1,0 +1,21 @@
+# Keep the build context small; everything here is rebuilt or unneeded in the image.
+node_modules
+.next
+out
+.git
+.vercel
+.env
+.env.*
+!.env.example
+test-results
+playwright-report
+coverage
+context
+tests
+scripts/qa
+*.md
+!README.md
+.DS_Store
+Dockerfile
+docker-compose.yml
+.dockerignore
